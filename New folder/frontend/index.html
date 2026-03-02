@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Code Documentation Auditor</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div>
+          <h1>AI Code Documentation Auditor</h1>
+          <p class="sub">
+            RAG-style coverage analysis to detect API methods missing documentation (with citations + gap report).
+          </p>
+        </div>
+        <div class="pill">R1–R5</div>
+      </header>
+
+      <section class="panel">
+        <div class="grid">
+          <label class="field">
+            <span>Root folder to audit</span>
+            <input id="rootPath" type="text" placeholder="C:\path\to\project" />
+            <div class="hint">Tip: use the sample path to see meaningful output immediately.</div>
+          </label>
+
+          <label class="field">
+            <span>Similarity threshold</span>
+            <div class="row">
+              <input id="threshold" type="range" min="0.10" max="0.90" step="0.01" value="0.45" />
+              <output id="thresholdOut">0.45</output>
+            </div>
+            <div class="hint">Lower = more “covered”; higher = stricter.</div>
+          </label>
+
+          <label class="field">
+            <span>Top-K doc matches</span>
+            <div class="row">
+              <input id="topK" type="number" min="1" max="10" value="3" />
+            </div>
+            <div class="hint">Matches shown per API chunk.</div>
+          </label>
+
+          <div class="actions">
+            <button id="runBtn" class="primary">Run audit</button>
+            <button id="useSampleBtn" class="ghost">Use sample project</button>
+            <button id="exportBtn" class="ghost" disabled>Export JSON</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="cards" id="summaryCards">
+          <div class="card">
+            <div class="k">API chunks</div>
+            <div class="v" id="sApi">–</div>
+          </div>
+          <div class="card">
+            <div class="k">Doc sections</div>
+            <div class="v" id="sDocs">–</div>
+          </div>
+          <div class="card ok">
+            <div class="k">Covered</div>
+            <div class="v" id="sCovered">–</div>
+          </div>
+          <div class="card warn">
+            <div class="k">Missing docs</div>
+            <div class="v" id="sMissing">–</div>
+          </div>
+          <div class="card warn">
+            <div class="k">Stale doc topics</div>
+            <div class="v" id="sStale">–</div>
+          </div>
+        </div>
+        <div class="status" id="status"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Missing documentation (API chunks below threshold)</h2>
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>API chunk</th>
+                <th>Best doc match (score)</th>
+                <th>Citation</th>
+              </tr>
+            </thead>
+            <tbody id="missingBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Stale documentation (doc topics with no matching API)</h2>
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Doc topic</th>
+                <th>Best score</th>
+                <th>Citation</th>
+              </tr>
+            </thead>
+            <tbody id="staleBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>How to read citations</h2>
+        <p class="small">
+          Citations are <b>file + line range</b> with an excerpt, so you can jump directly to the code/doc region.
+        </p>
+      </section>
+
+      <footer class="footer">
+        <span>Local-only analyzer. No API keys.</span>
+      </footer>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
+
